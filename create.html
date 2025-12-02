@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>自己動手做假影片 - DeepFake 假影片辨識系統</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="min-h-screen font-sans">
+  <div class="max-w-container mx-auto p-6">
+    <header class="flex items-center justify-between mb-4">
+      <h1 class="text-3xl font-extrabold text-center w-full md:w-auto">DeepFake假影片辨識系統</h1>
+      <button id="hamburger" class="ml-4 p-3 rounded hover:bg-white/30 md:hidden" aria-expanded="false"
+        aria-controls="sideMenu">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </header>
+
+    <nav class="nav-bar">
+      <a href="index.html" class="nav-btn">影片辨識</a>
+      <a href="create.html" class="nav-btn active">自己動手做假影片</a>
+      <a href="game.html" class="nav-btn">分辨小遊戲</a>
+      <a href="forum.html" class="nav-btn">相關論壇討論</a>
+    </nav>
+
+    <main>
+      <section class="glass p-6 rounded-lg">
+        <h2 class="text-2xl font-bold mb-4 text-blue-800">自己動手做假影片</h2>
+        <div class="space-y-4">
+          <div class="accent p-4 rounded-lg">
+            <h3 class="text-white font-bold mb-2">教學說明</h3>
+            <p class="text-white">這個頁面將教你如何製作假影片，讓你了解 DeepFake 技術的運作原理。</p>
+          </div>
+          
+          <div class="glass p-4 rounded-lg">
+            <h3 class="font-bold mb-3">製作步驟：</h3>
+            <ol class="list-decimal list-inside space-y-2">
+              <li>上傳原始影片</li>
+              <li>選擇要替換的臉部</li>
+              <li>上傳目標臉部照片</li>
+              <li>開始處理</li>
+              <li>下載生成的影片</li>
+            </ol>
+          </div>
+
+          <div class="glass p-4 rounded-lg">
+            <h3 class="font-bold mb-3">上傳素材：</h3>
+            <div class="space-y-3">
+              <div>
+                <label class="text-sm font-medium">原始影片：</label>
+                <input type="file" accept="video/*" class="block mt-1 text-sm" />
+              </div>
+              <div>
+                <label class="text-sm font-medium">目標臉部照片：</label>
+                <input type="file" accept="image/*" class="block mt-1 text-sm" />
+              </div>
+              <button class="px-4 py-2 rounded-full pill shadow hover:brightness-95">開始製作</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg menu-panel md:hidden" aria-hidden="true">
+  </div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
