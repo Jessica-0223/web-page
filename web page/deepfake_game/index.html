@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake 分辨小遊戲</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>分辨小遊戲</h1>
+        </header>
+
+        <main>
+            <h2 id="question-title">Q?: 假影片是哪個？</h2>
+
+            <div class="video-panel">
+                <div class="video-box" id="video-left" data-choice="left">
+                    <video class="video-player" loop muted playsinline preload="auto">
+                        </video>
+                </div>
+
+                <div class="video-box" id="video-right" data-choice="right">
+                    <video class="video-player" loop muted playsinline preload="auto">
+                        </video>
+                </div>
+            </div>
+
+            <div id="result-message" class="message hidden"></div>
+            <p id="explanation-text" class="explanation hidden"></p>
+
+            <button id="next-question-btn" class="hidden">下一題</button>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

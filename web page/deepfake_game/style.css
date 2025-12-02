@@ -1,0 +1,104 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e0f7fa; /* 淺藍色背景 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #0d47a1;
+}
+
+.game-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    width: 90%;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    color: #0d47a1;
+}
+
+#question-title {
+    font-size: 1.5em;
+    margin-bottom: 25px;
+    color: #37474f;
+}
+
+/* --- 影片面板樣式 --- */
+.video-panel {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* 影片間距 */
+    margin-bottom: 30px;
+}
+
+.video-box {
+    width: 45%;
+    max-width: 400px;
+    border: 5px solid #0d47a1; /* 藍色邊框 */
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.video-player {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* 點擊後的回饋樣式 */
+.video-box.correct {
+    border-color: #4caf50; /* 綠色邊框 */
+    box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+}
+
+.video-box.incorrect {
+    border-color: #f44336; /* 紅色邊框 */
+    box-shadow: 0 0 15px rgba(244, 67, 54, 0.8);
+}
+
+/* --- 按鈕和訊息樣式 --- */
+#next-question-btn {
+    background-color: #212121; /* 黑色背景，參考圖片 */
+    color: white;
+    padding: 10px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+#next-question-btn:hover {
+    background-color: #424242;
+}
+
+.message {
+    font-size: 1.3em;
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.explanation {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #555;
+    background-color: #f1f8e9;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.hidden {
+    display: none;
+}

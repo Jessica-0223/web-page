@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>分辨小遊戲 - DeepFake 假影片辨識系統</title>
+  <link rel="stylesheet" href="styles.css">
+      <style>
+    /* --- deepfake_game/style.css 內嵌（已加上 .deepfake-scope 前綴以避免全域衝突） --- */
+    .deepfake-scope {
+      font-family: Arial, sans-serif;
+      color: #0d47a1;
+    }
+
+    .deepfake-scope .game-container {
+      background-color: #ffffff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      max-width: 900px;
+      width: 100%;
+      text-align: center;
+    }
+
+    .deepfake-scope header h1 {
+      font-size: 2.0em;
+      margin-bottom: 12px;
+      color: #0d47a1;
+    }
+
+    .deepfake-scope #question-title {
+      font-size: 1.2em;
+      margin-bottom: 18px;
+      color: #37474f;
+    }
+
+    .deepfake-scope .video-panel {
+      display: flex;
+      justify-content: center;
+      gap: 18px; /* 影片間距 */
+      margin-bottom: 20px;
+    }
+
+    .deepfake-scope .video-box {
+      width: 48%;
+      max-width: 400px;
+      border: 5px solid #0d47a1; /* 藍色邊框 */
+      border-radius: 8px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+    }
+
+    .deepfake-scope .video-player {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .deepfake-scope .video-box.correct {
+      border-color: #4caf50; /* 綠色邊框 */
+      box-shadow: 0 0 15px rgba(76, 175, 80, 0.8);
+    }
+
+    .deepfake-scope .video-box.incorrect {
+      border-color: #f44336; /* 紅色邊框 */
+      box-shadow: 0 0 15px rgba(244, 67, 54, 0.8);
+    }
+
+    .deepfake-scope #next-question-btn {
+      background-color: #212121; /* 黑色背景，參考圖片 */
+      color: white;
+      padding: 10px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1em;
+      margin-top: 12px;
+      transition: background-color 0.2s;
+    }
+
+    .deepfake-scope #next-question-btn:hover {
+      background-color: #424242;
+    }
+
+    .deepfake-scope .message {
+      font-size: 1.1em;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .deepfake-scope .explanation {
+      margin-top: 8px;
+      font-size: 0.95em;
+      color: #555;
+      background-color: #f1f8e9;
+      padding: 8px;
+      border-radius: 5px;
+    }
+
+    .deepfake-scope .hidden {
+      display: none;
+    }
+    /* --- end deepfake_game/style.css（scoped） --- */
+      </style>
+</head>
+
+<body class="min-h-screen font-sans">
+  <div class="max-w-container mx-auto p-6">
+    <header class="flex items-center justify-between mb-4">
+      <h1 class="text-3xl font-extrabold text-center w-full md:w-auto">DeepFake假影片辨識系統</h1>
+      <button id="hamburger" class="ml-4 p-3 rounded hover:bg-white/30 md:hidden" aria-expanded="false"
+        aria-controls="sideMenu">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 6h18M3 12h18M3 18h18" stroke="#0f172a" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </button>
+    </header>
+
+    <nav class="nav-bar">
+      <a href="index.html" class="nav-btn">影片辨識</a>
+      <a href="create.html" class="nav-btn">自己動手做假影片</a>
+      <a href="game.html" class="nav-btn active">分辨小遊戲</a>
+      <a href="forum.html" class="nav-btn">相關論壇討論</a>
+    </nav>
+
+    <main>
+      <section class="glass p-6 rounded-lg">
+        <h2 class="text-2xl font-bold mb-4 text-blue-800">分辨小遊戲</h2>
+        <div class="space-y-4">
+          <div class="accent p-4 rounded-lg">
+            <h3 class="text-white font-bold mb-2">遊戲說明</h3>
+            <p class="text-white">測試你的眼力！看看你能否分辨出哪些影片是真的，哪些是 DeepFake 假影片。</p>
+          </div>
+
+          <div class="glass p-4 rounded-lg">
+            <h3 class="font-bold mb-3">你的分數：<span id="score">0</span> / <span id="total">0</span></h3>
+            <div class="w-full bg-gray-200 rounded-full h-2.5 mb-4">
+              <div id="progressBar" class="bg-blue-600 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div id="gameArea" class="glass p-4 rounded-lg">
+            <!-- deepfake_game 主要遊戲區塊（已整合） -->
+            <div class="deepfake-scope">
+            <div class="game-container">
+                <header>
+                    <h1>分辨小遊戲</h1>
+                </header>
+
+                <main>
+                    <h2 id="question-title">Q?: 假影片是哪個？</h2>
+
+                    <div class="video-panel">
+                        <div class="video-box" id="video-left" data-choice="left">
+                            <video class="video-player" loop muted playsinline preload="auto"></video>
+                        </div>
+
+                        <div class="video-box" id="video-right" data-choice="right">
+                            <video class="video-player" loop muted playsinline preload="auto"></video>
+                        </div>
+                    </div>
+
+                    <div id="result-message" class="message hidden"></div>
+                    <p id="explanation-text" class="explanation hidden"></p>
+
+                    <button id="next-question-btn" class="hidden">下一題</button>
+                </main>
+            </div>
+            </div>
+          </div>
+
+          <div class="glass p-4 rounded-lg">
+            <h3 class="font-bold mb-2">提示：</h3>
+            <ul class="list-disc list-inside space-y-1 text-sm text-slate-700">
+              <li>注意臉部邊緣是否模糊</li>
+              <li>觀察眼睛眨動是否自然</li>
+              <li>留意光影變化是否合理</li>
+              <li>檢查牙齒和頭髮細節</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="sideMenu" class="fixed top-0 right-0 h-full w-64 bg-white shadow-lg menu-panel md:hidden" aria-hidden="true">
+  </div>
+
+    <script>
+  // --- deepfake_game/script.js（已內嵌，影片路徑改為 deepfake_game/videos/...） ---
+  // --- 題庫資料 (Deepfake Game Data) ---
+  // 請確保 'deepfake_game/videos/' 路徑下的檔案是存在的
+  const questions = [
+    {
+      id: 1,
+      real_video: 'deepfake_game/videos/q1_real.mp4',
+      fake_video: 'deepfake_game/videos/q1_fake.mp4',
+      explanation: '專業分析：請仔細觀察嘴唇邊緣，Deepfake 影片在高速動作時出現輕微的鋸齒狀偽影，這是生成模型常見的破綻。',
+    },
+    {
+      id: 2,
+      real_video: 'deepfake_game/videos/q2_real.mp4',
+      fake_video: 'deepfake_game/videos/q2_fake.mp4',
+      explanation: '專業分析：Deepfake 影片中的人物眼神接觸略微不自然，且臉部陰影處的顏色漸變不如真實影片平滑，有塊狀感。',
+    }
+    // 您可以繼續添加更多題目
+  ];
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let currentAnswer = ''; // 儲存當前題目的正確答案 ('left' 或 'right')
+
+  // --- DOM 元素選擇器 ---
+  const videoLeftBox = document.getElementById('video-left');
+  const videoRightBox = document.getElementById('video-right');
+  const videoLeftPlayer = videoLeftBox.querySelector('.video-player');
+  const videoRightPlayer = videoRightBox.querySelector('.video-player');
+  const questionTitle = document.getElementById('question-title');
+  const resultMessage = document.getElementById('result-message');
+  const explanationText = document.getElementById('explanation-text');
+  const nextBtn = document.getElementById('next-question-btn');
+  // 頁面上方的分數與進度（來自主頁面的元素）
+  const uiScore = document.getElementById('score');
+  const uiTotal = document.getElementById('total');
+  const uiProgressBar = document.getElementById('progressBar');
+
+  /**
+   * 重置影片框、訊息和按鈕，準備下一題。
+   */
+  function resetUI() {
+    [videoLeftBox, videoRightBox].forEach(box => {
+      // 清除所有邊框顏色
+      box.classList.remove('correct', 'incorrect');
+      // 重新啟用點擊事件
+      box.style.pointerEvents = 'auto';
+    });
+
+    resultMessage.classList.add('hidden');
+    explanationText.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+  }
+
+  /**
+   * 隨機決定真假影片在左右的位置，並載入播放器。
+   */
+  function loadQuestion(index) {
+    // 1. 重置介面
+    resetUI();
+    
+    // 2. 獲取當前題目數據
+    const q = questions[index];
+    if (!q) {
+      // 所有題目答完，顯示結束訊息
+      questionTitle.textContent = `遊戲結束！您的最終得分是 ${score}/${questions.length}。`;
+      resultMessage.textContent = '恭喜您完成所有挑戰！';
+      resultMessage.classList.remove('hidden');
+      // 更新上方分數與進度
+      if (uiScore) uiScore.textContent = score;
+      if (uiTotal) uiTotal.textContent = questions.length;
+      if (uiProgressBar) uiProgressBar.style.width = '100%';
+      // 顯示「重新測驗」按鈕（如果尚未存在則建立）
+      let retryBtn = document.getElementById('retry-btn');
+      if (!retryBtn) {
+        retryBtn = document.createElement('button');
+        retryBtn.id = 'retry-btn';
+        retryBtn.textContent = '重新測驗';
+        retryBtn.style.marginLeft = '10px';
+        retryBtn.style.padding = '8px 14px';
+        retryBtn.style.borderRadius = '6px';
+        retryBtn.style.border = 'none';
+        retryBtn.style.cursor = 'pointer';
+        retryBtn.style.background = '#0d47a1';
+        retryBtn.style.color = 'white';
+        // 點擊後重設並重新開始
+        retryBtn.addEventListener('click', () => {
+          score = 0;
+          currentQuestionIndex = 0;
+          if (uiScore) uiScore.textContent = score;
+          if (uiProgressBar) uiProgressBar.style.width = '0%';
+          // 隱藏結束訊息並開始第一題
+          resultMessage.classList.add('hidden');
+          explanationText.classList.add('hidden');
+          if (retryBtn && retryBtn.parentNode) retryBtn.parentNode.removeChild(retryBtn);
+          loadQuestion(0);
+        });
+        // 將按鈕放在 nextBtn 之後
+        if (nextBtn && nextBtn.parentNode) nextBtn.parentNode.insertBefore(retryBtn, nextBtn.nextSibling);
+      } else {
+        retryBtn.style.display = 'inline-block';
+      }
+      return; // 結束函數執行
+    }
+    
+    // 3. 設置問題標題
+    questionTitle.textContent = `Q${q.id}: 假影片是哪個？ (目前得分: ${score})`;
+
+    // 更新上方分數與總題數
+    if (uiScore) uiScore.textContent = score;
+    if (uiTotal) uiTotal.textContent = questions.length;
+    if (uiProgressBar) {
+      const pct = Math.round((index / questions.length) * 100);
+      uiProgressBar.style.width = `${pct}%`;
+    }
+
+    // 4. 隨機決定位置
+    const isFakeOnLeft = Math.random() < 0.5;
+    
+    const leftSrc = isFakeOnLeft ? q.fake_video : q.real_video;
+    const rightSrc = isFakeOnLeft ? q.real_video : q.fake_video;
+    
+    // 設置正確答案 (假影片在哪一側)
+    currentAnswer = isFakeOnLeft ? 'left' : 'right';
+
+    // 5. 設置影片來源
+    videoLeftPlayer.src = leftSrc;
+    videoRightPlayer.src = rightSrc;
+    
+    // 6. 載入並開始播放 (確保影片循環播放，以便觀察)
+    videoLeftPlayer.load();
+    videoRightPlayer.load();
+    
+    // 由於瀏覽器自動播放限制，我們使用 Promise 或事件處理來確保播放
+    videoLeftPlayer.play().catch(e => console.log("無法自動播放左側影片:", e));
+    videoRightPlayer.play().catch(e => console.log("無法自動播放右側影片:", e));
+  }
+
+  /**
+   * 處理使用者點擊影片的事件。
+   * @param {HTMLElement} clickedBox - 被點擊的影片容器。
+   */
+  function handleChoice(clickedBox) {
+    // 1. 禁用進一步的點擊
+    [videoLeftBox, videoRightBox].forEach(box => {
+      box.style.pointerEvents = 'none';
+    });
+    
+    // 2. 找出真/假影片的元素
+    const userChoice = clickedBox.dataset.choice;
+    const isCorrect = userChoice === currentAnswer;
+    const correctBox = currentAnswer === 'left' ? videoLeftBox : videoRightBox;
+    
+    // 3. 判斷並給予視覺回饋
+    if (isCorrect) {
+      // 答對了
+      score++; // 增加分數
+      clickedBox.classList.add('correct');
+      resultMessage.textContent = '✅ 答對了！您成功辨識出 Deepfake 影片！';
+      resultMessage.style.color = '#4caf50';
+    } else {
+      // 答錯了
+      clickedBox.classList.add('incorrect');
+      correctBox.classList.add('correct'); // 標示出正確的假影片
+      resultMessage.textContent = '❌ 答錯了。這是真實影片。';
+      resultMessage.style.color = '#f44336';
+    }
+    
+    // 4. 顯示專業解釋
+    explanationText.textContent = questions[currentQuestionIndex].explanation;
+    
+    // 5. 顯示結果和下一題按鈕
+    resultMessage.classList.remove('hidden');
+    explanationText.classList.remove('hidden');
+    nextBtn.classList.remove('hidden');
+
+    // 更新上方分數與進度（回答後進度向前一題）
+    if (uiScore) uiScore.textContent = score;
+    if (uiTotal) uiTotal.textContent = questions.length;
+    if (uiProgressBar) {
+      const pct = Math.round(((currentQuestionIndex + 1) / questions.length) * 100);
+      uiProgressBar.style.width = `${pct}%`;
+    }
+  }
+
+  /**
+   * 初始化遊戲和事件監聽器。
+   */
+  function initGame() {
+    // 綁定點擊事件到兩個影片框
+    videoLeftBox.addEventListener('click', () => handleChoice(videoLeftBox));
+    videoRightBox.addEventListener('click', () => handleChoice(videoRightBox));
+    
+    // 綁定「下一題」按鈕事件
+    nextBtn.addEventListener('click', () => {
+      currentQuestionIndex++;
+      loadQuestion(currentQuestionIndex);
+    });
+    
+    // 啟動第一道題目
+    loadQuestion(currentQuestionIndex);
+  }
+
+  // 啟動遊戲
+  document.addEventListener('DOMContentLoaded', initGame);
+  /* --- end deepfake_game/script.js --- */
+    </script>
+    <script src="script.js"></script>
+</body>
+
+</html>
